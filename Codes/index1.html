@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alphafarm — Iniciar sesión</title>
+  <style>
+    :root {
+      --accent: #2b9f6b;
+      --accent-light: #6bd0a0;
+      --bg-overlay: rgba(255, 255, 255, 0.85);
+      font-family: 'Poppins', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('https://images.unsplash.com/photo-1580281657521-5c4f3b7d8f9d?q=80&w=1500&auto=format&fit=crop') no-repeat center/cover;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-overlay);
+    }
+
+    .login-box {
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      color: #111827;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 6px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(43, 159, 107, 0.15);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: var(--accent-light);
+    }
+
+    .footer-text {
+      margin-top: 18px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .footer-text a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <form class="login-box">
+    <h1>Iniciar sesión</h1>
+    <p>Accede al sistema Alphafarm</p>
+
+    <label for="rut">RUT</label>
+    <input type="text" id="rut" name="rut" placeholder="Ej: 12.345.678-9" required>
+
+    <label for="clave">Contraseña</label>
+    <input type="password" id="clave" name="clave" placeholder="••••••••" required>
+
+    <button type="submit">Ingresar</button>
+
+    <div class="footer-text">
+      ¿No tienes cuenta? <a href="registro.html">Crear cuenta</a>
+    </div>
+  </form>
+</body>
+</html>
+
+
+
+
