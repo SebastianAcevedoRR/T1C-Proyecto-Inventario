@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alphafarm — Sistema de Gestión de Productos</title>
+  <meta name="description" content="Alphafarm — Sistema de Información Administrativa para Farmacia Acevedo. Gestión de productos, inventario y alertas.">
+  <style>
+    :root{
+      --bg:#f6fbf7;
+      --card:#ffffff;
+      --accent:#2b9f6b;
+      --accent-2:#6bd0a0;
+      --muted:#6b7280;
+      --danger:#e74c3c;
+      --glass: rgba(255,255,255,0.7);
+      --radius:12px;
+      --maxw:1100px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: linear-gradient(180deg, #ecf9f0 0%, var(--bg) 100%);
+      color:#111827;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:40px 20px;
+      display:flex;
+      justify-content:center;
+      font-size:16px;
+    }
+    .app{
+      width:100%;
+      max-width:var(--maxw);
+      background:transparent;
+    }
+
+    /* Header */
+    header{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      margin-bottom:22px;
+    }
+    .logo{
+      width:74px;
+      height:74px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:700;
+      font-size:22px;
+      box-shadow:0 8px 24px rgba(43,159,107,0.18);
+    }
+    .brand h1{margin:0;font-size:20px}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+    /* Layout */
+    .grid{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:20px;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:0 6px 18px rgba(15,23,42,0.04);
+      height:calc(100% - 0px);
+    }
+    .profile{
+      display:flex;gap:12px;align-items:center;margin-bottom:10px
+    }
+    .avatar{width:52px;height:52px;border-radius:10px;background:linear-gradient(90deg,#fff,#f0f0f0);display:flex;align-items:center;justify-content:center;font-weight:700;color:#2b9f6b}
+    .nav{margin-top:12px}
+    .nav a{display:flex;gap:10px;padding:10px;border-radius:10px;color:#0f172a;text-decoration:none;font-weight:600;margin-bottom:6px}
+    .nav a.active{background:linear-gradient(90deg,#f0fbf4,#ffffff);box-shadow:inset 0 -1px 0 rgba(0,0,0,0.02)}
+
+    /* Main */
+    .main{
+      display:flex;flex-direction:column;gap:18px;
+    }
+    .panel{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:0 6px 18px rgba(15,23,42,0.04);
+    }
+
+    .controls{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .search{display:flex;gap:10px;align-items:center}
+    .search input{padding:10px 12px;border-radius:10px;border:1px solid #e6e8eb;min-width:260px}
+    .btn{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid #e6f3ea;color:var(--accent)}
+
+    /* Summary */
+    .kpis{display:flex;gap:12px;margin-top:12px}
+    .kpi{flex:1;padding:12px;border-radius:10px;background:linear-gradient(180deg, #fff, #fbfffb);display:flex;flex-direction:column}
+    .kpi h3{margin:0;font-size:14px;color:var(--muted)}
+    .kpi strong{font-size:18px}
+
+    /* Product grid */
+    .products{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+      gap:14px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:12px;
+      box-shadow:0 6px 18px rgba(15,23,42,0.04);
+      display:flex;flex-direction:column;gap:10px;min-height:220px
+    }
+    .card img{width:100%;height:110px;object-fit:cover;border-radius:8px}
+    .card .meta{display:flex;justify-content:space-between;align-items:center}
+    .tag{font-size:12px;padding:6px 8px;border-radius:999px;background:#f1fdf6;color:var(--accent);border:1px solid rgba(43,159,107,0.08)}
+    .price{font-weight:700}
+    .stock{font-size:13px;color:var(--muted)}
+    .card .actions{display:flex;gap:8px;margin-top:auto}
+    .pill{padding:6px 8px;border-radius:10px;border:none;background:#f3f7f5;font-weight:600}
+    .low{color:var(--danger);font-weight:700}
+
+    footer{margin-top:12px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* Responsive */
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:flex-start}
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Alphafarm — Sistema de Gestión de Productos">
+
+    <header>
+      <div class="logo" aria-hidden="true">AF</div>
+      <div class="brand">
+        <h1>Alphafarm — Farmacia Acevedo</h1>
+        <p>Sistema de gestión de productos e inventario</p>
+      </div>
+    </header>
+
+    <main class="grid">
+      <aside class="sidebar" aria-label="Navegación principal">
+        <div class="profile">
+          <div class="avatar">FA</div>
+          <div>
+            <div style="font-weight:700">Farmacia Acevedo</div>
+            <div style="font-size:13px;color:var(--muted)">Usuario: Administrador</div>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Menú">
+          <a href="#" class="active">Productos</a>
+          <a href="#">Inventario</a>
+          <a href="#">Proveedores</a>
+          <a href="#">Reportes</a>
+          <a href="#">Auditoría</a>
+          <a href="#">Configuración</a>
+        </nav>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid #f0f2f4">
+        <div style="font-size:13px;color:var(--muted)">
+          Niveles críticos:
+          <ul style="margin:6px 0 0;padding-left:18px;color:var(--danger);font-weight:700">
+            <li>Ibuprofeno (3)</li>
+            <li>Paracetamol (0)</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="main">
+
+        <section class="panel" aria-labelledby="gestion">
+          <div class="controls">
+            <div class="search">
+              <input type="search" placeholder="Buscar por nombre, código o categoría" aria-label="Buscar productos">
+              <button class="btn">Buscar</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="btn">Agregar producto</button>
+              <button class="btn ghost">Importar</button>
+            </div>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi">
+              <h3>Productos registrados</h3>
+              <strong>1.243</strong>
+              <span style="color:var(--muted);font-size:13px;margin-top:6px">Última actualización: 09 Oct 2025</span>
+            </div>
+            <div class="kpi">
+              <h3>Productos por vencer (30d)</h3>
+              <strong>12</strong>
+              <span style="color:var(--muted);font-size:13px;margin-top:6px">Alertas activas</span>
+            </div>
+            <div class="kpi">
+              <h3>Stock crítico</h3>
+              <strong>5 productos</strong>
+              <span style="color:var(--muted);font-size:13px;margin-top:6px">Reponer pronto</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="productos">
+          <h2 style="margin:0 0 12px">Productos</h2>
+
+          <div class="products" role="list">
+
+            <!-- Product card 1 -->
+            <article class="card" role="listitem">
+              <img src="https://images.unsplash.com/photo-1580281657521-5c4f3b7d8f9d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=1" alt="Caja de paracetamol">
+              <div class="meta">
+                <div>
+                  <div style="font-weight:700">Paracetamol 500mg</div>
+                  <div class="stock">Código: PCT-500 · Categoría: Analgésico</div>
+                </div>
+                <div class="tag">Farmacia Acevedo</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="price">$1.200</div>
+                <div class="stock">Stock: <span>0</span></div>
+              </div>
+              <div class="actions">
+                <button class="pill">Ver</button>
+                <button class="pill">Editar</button>
+                <div class="pill low">Reponer</div>
+              </div>
+            </article>
+
+            <!-- Product card 2 -->
+            <article class="card" role="listitem">
+              <img src="https://images.unsplash.com/photo-1580281657521-6f3a3b7d8f1a?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2" alt="Ibuprofeno en blister">
+              <div class="meta">
+                <div>
+                  <div style="font-weight:700">Ibuprofeno 400mg</div>
+                  <div class="stock">Código: IBU-400 · Categoría: Antiinflamatorio</div>
+                </div>
+                <div class="tag">Proveedor: SaludPlus</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="price">$1.450</div>
+                <div class="stock">Stock: <span>3</span></div>
+              </div>
+              <div class="actions">
+                <button class="pill">Ver</button>
+                <button class="pill">Editar</button>
+                <div class="pill low">Bajo</div>
+              </div>
+            </article>
+
+            <!-- Product card 3 -->
+            <article class="card" role="listitem">
+              <img src="https://images.unsplash.com/photo-1580281657521-3e2b3f8d2a0c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3" alt="Vitamina C en frasco">
+              <div class="meta">
+                <div>
+                  <div style="font-weight:700">Vitamina C 500mg</div>
+                  <div class="stock">Código: VITC-500 · Categoría: Suplemento</div>
+                </div>
+                <div class="tag">Proveedor: Naturalia</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="price">$2.200</div>
+                <div class="stock">Stock: <span>24</span></div>
+              </div>
+              <div class="actions">
+                <button class="pill">Ver</button>
+                <button class="pill">Editar</button>
+              </div>
+            </article>
+
+            <!-- Product card 4 (example with expiring soon) -->
+            <article class="card" role="listitem">
+              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=4" alt="Medicamento con etiqueta de fecha de vencimiento">
+              <div class="meta">
+                <div>
+                  <div style="font-weight:700">Insulina (frasco)</div>
+                  <div class="stock">Código: INS-01 · Categoría: Especialidad</div>
+                </div>
+                <div class="tag">Almacén Principal</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="price">$12.500</div>
+                <div class="stock">Stock: <span>8</span></div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <div class="pill" title="Vence en 20 días">Vence: 29 Oct 2025</div>
+                <div class="pill">Ver</div>
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        <footer>
+          Alphafarm — Farmacia Acevedo · Sistema de gestión de productos · Diseño base (HTML/CSS)
+        </footer>
+
+      </section>
+    </main>
+
+  </div>
+</body>
+</html>
+
+
+
+
